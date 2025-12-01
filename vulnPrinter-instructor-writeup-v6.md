@@ -19,7 +19,6 @@
 7. [Phase 6: Print Job Intelligence Gathering](#phase-6-print-job-intelligence-gathering)
 8. [Advanced Techniques and Alternative Approaches](#advanced-techniques-and-alternative-approaches)
 9. [Metasploit Framework Integration](#metasploit-framework-integration)
-10. [Defense and Remediation](#defense-and-remediation)
 
 ---
 
@@ -1740,198 +1739,7 @@ msf6 auxiliary(scanner/printer/printer_ready_message) > run
 
 ---
 
-## Defense and Remediation
-
-### For System Administrators
-
-#### Immediate Actions
-
-**1. Change All Default Credentials**:
-```bash
-# Access printer web interface
-# Navigate to Security > Access Control
-# Change admin password to strong, unique value
-# Minimum 16 characters, mixed case, numbers, symbols
-```
-
-**2. Disable or Secure SNMP**:
-```bash
-# If SNMP not needed:
-# Disable via Security > Network Services > SNMP
-
-# If SNMP required:
-# Change community strings from "public/private"
-# Use SNMPv3 with authentication
-# Restrict access to specific management IP addresses
-```
-
-**3. Enable IPP Authentication**:
-```bash
-# Navigate to Security > Network Services > IPP
-# Enable "Require Authentication for IPP"
-# Configure username/password or certificate-based auth
-```
-
-**4. Implement Network Segmentation**:
-```
-Printers should be on dedicated VLAN:
-- Separate from user workstation network
-- Separate from server network
-- Firewall rules limiting printer access to:
-  * Authorized print servers only
-  * Management workstations only
-  * Block internet access
-```
-
-**5. Enable Encryption**:
-```bash
-# Navigate to Security > Encryption
-# Enable SSL/TLS for web interface (HTTPS only)
-# Enable IPP over TLS (IPPS on port 443)
-# Disable all plaintext protocols
-```
-
-**6. Clear Print Job History**:
-```bash
-# Navigate to Print > Job Log
-# Clear all historical jobs
-# Configure automatic job log deletion
-# Set retention to 24-48 hours maximum
-```
-
-**7. Update Firmware**:
-```bash
-# Check current version vs. latest:
-# Current: 002_2306A
-# Latest: Check https://support.hp.com
-# Apply all security patches
-# Enable automatic update checking
-```
-
-#### Long-Term Security Measures
-
-**Network-Level Controls**:
-- Deploy network access control (NAC) for printer registration
-- Implement 802.1X authentication for network access
-- Use VLAN access control lists (VACLs) to restrict printer traffic
-- Deploy intrusion detection systems (IDS) to monitor printer protocols
-
-**Authentication & Authorization**:
-- Integrate with Active Directory/LDAP for centralized authentication
-- Implement role-based access control (RBAC)
-- Require multi-factor authentication (MFA) for admin access
-- Regular password rotation policy
-
-**Monitoring & Logging**:
-- Enable SYSLOG forwarding to SIEM
-- Monitor for:
-  * Failed authentication attempts
-  * Configuration changes
-  * Unusual print jobs (size, time, user)
-  * Network anomalies (port scans, unusual protocols)
-- Configure alerts for security events
-
-**Configuration Management**:
-- Maintain baseline configurations
-- Use configuration management tools (Ansible, Puppet)
-- Regular configuration audits
-- Automated compliance checking
-
-### For Penetration Testers
-
-#### Testing Checklist
-
-**Phase 1: Information Gathering**
-- [ ] Port scanning (TCP/UDP)
-- [ ] Service enumeration (versions, banners)
-- [ ] SNMP community string testing
-- [ ] IPP endpoint discovery
-- [ ] Web interface fingerprinting
-
-**Phase 2: Protocol Testing**
-- [ ] SNMP enumeration (sysLocation, sysContact, sysDescr)
-- [ ] IPP attribute queries (all protocols)
-- [ ] PRET connection (PS/PJL/PCL)
-- [ ] Print job metadata extraction
-- [ ] Configuration file download
-
-**Phase 3: Authentication Testing**
-- [ ] Default credential testing (Admin PIN obtained from related systems)
-- [ ] Credential reuse from other infrastructure
-- [ ] Password complexity assessment
-- [ ] Account lockout policy testing
-- [ ] Session management review
-
-**Phase 4: Exploitation**
-- [ ] SNMP write access testing
-- [ ] Print job capture setup
-- [ ] Filesystem modification attempts
-- [ ] Configuration tampering
-- [ ] Firmware analysis (if applicable)
-
-**Phase 5: Documentation**
-- [ ] All discovered flags/credentials documented
-- [ ] Attack chain clearly mapped
-- [ ] Remediation steps provided
-- [ ] Risk ratings assigned
-- [ ] Evidence screenshots/logs captured
-
-### Common Misconfigurations Found in Production
-
-**Based on Real Penetration Tests**:
-
-1. **Default SNMP Community Strings (95% of printers)**
-   - "public" for read access
-   - "private" for write access
-   - No IP-based access restrictions
-
-2. **Unauthenticated IPP (85% of printers)**
-   - Print job metadata fully accessible
-   - No authentication required for queries
-   - Job manipulation sometimes possible
-
-3. **Weak or Default Admin Passwords (70% of printers)**
-   - 8-digit numeric PINs
-   - Manufacturer defaults unchanged
-   - Shared across multiple devices
-
-4. **Exposed Web Interfaces (90% of printers)**
-   - Accessible from user networks
-   - Legacy TLS versions accepted
-   - Self-signed certificates (expected but increases MITM risk)
-
-5. **Print Job History Retention (100% of tested printers)**
-   - Jobs retained indefinitely
-   - Sensitive document names visible
-   - Username metadata exposed
-
-6. **Unnecessary Services Enabled (60% of printers)**
-   - Telnet or FTP sometimes present
-   - Multiple discovery protocols broadcasting
-   - All management protocols accessible without need
-
----
-
-## Appendix A: Complete Flag Reference
-
-| Flag # | Flag Value | Protocol | Location | Difficulty |
-|--------|------------|----------|----------|------------|
-| 1 | FLAG{LUKE47239581} | SNMP/IPP | sysLocation.0 / printer-location | Easy |
-| 2 | FLAG{LEIA83920174} | SNMP/IPP | sysContact.0 / printer-contact | Easy |
-| 3 | FLAG{HAN62947103} | IPP | printer-info | Medium |
-| 4 | FLAG{PADME91562837} | IPP | job-originating-user-name (Job 1236) | Medium |
-| 5 | FLAG{MACE41927365} | IPP | job-name (Job 1237) | Hard |
-
-
-**Credential Information** (obtained from AXIS camera engagement):
-- Username: Admin
-- Password: 68076694
-- Source: Displayed on AXIS camera video feed during previous penetration test
-- Demonstrates: Credential reuse vulnerability across infrastructure
-
----
-
-## Appendix B: Complete Command Reference
+## Appendix A: Complete Command Reference
 
 ### SNMP Commands
 ```bash
@@ -2010,7 +1818,7 @@ nmap --script printer-info 192.168.1.131
 
 ---
 
-## Appendix C: IPP Test File Templates
+## Appendix B: IPP Test File Templates
 
 ### Get-Printer-Attributes (All Attributes)
 ```
@@ -2072,7 +1880,7 @@ nmap --script printer-info 192.168.1.131
 
 ---
 
-## Appendix D: Troubleshooting Guide
+## Appendix C: Troubleshooting Guide
 
 ### Issue 1: PRET Connection Failures
 
@@ -2167,18 +1975,3 @@ ipptool -tv ipp://192.168.1.131:631/ipp/print get-printer-attributes.test | awk 
 - Use verbose output (-v flag)
 - Check all relevant fields (location, contact, info, job-name, job-user)
 - Try different protocols (flags may appear in different locations)
-
----
-
-**Educational Use Only**: This material is for authorized security testing and education in controlled environments only. These techniques demonstrate real vulnerabilities that exist in production environments. Use only with explicit authorization on systems you own or have written permission to test. Unauthorized access to computer systems is illegal under the Computer Fraud and Abuse Act (CFAA) and similar laws worldwide.
-
----
-
-**Version**: 5.0 Complete (Revised)
-**Last Updated**: November 2024
-**Author**: OverClock Security Training Team
-**Target Device**: HP Color LaserJet Pro MFP 4301fdw
-**Flags**: 5 total (Star Wars themed)
-**Difficulty**: Beginner to Intermediate
-**Estimated Time**: 2-4 hours
-**Prerequisites**: Completion of AXIS camera engagement (credentials obtained)
