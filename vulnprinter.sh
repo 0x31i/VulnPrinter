@@ -1,7 +1,6 @@
 #!/bin/bash
 ################################################################################
-# HP Printer CTF Flag Deployment - Complete Version
-# Includes: Flag Placement + Realistic print job simulation
+# HP Printer CTF Flag Deployment - Version 6.0
 ################################################################################
 
 PRINTER_IP="192.168.1.131"
