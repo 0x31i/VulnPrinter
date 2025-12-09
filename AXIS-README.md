@@ -58,7 +58,7 @@ ssh root@192.168.148.103
 chmod +x /tmp/vulnaxis.sh
 
 # Run setup (takes ~10 seconds)
-/tmp/vulnaxis.sh
+sh /tmp/vulnaxis.sh
 ```
 
 **Expected Output:**
