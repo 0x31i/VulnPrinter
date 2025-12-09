@@ -69,7 +69,7 @@ The flags in this lab represent real types of sensitive data:
 └─$ sudo apt upgrade -y
 ```
 
-**Expected Output**:
+**Output**:
 ```
 Hit:1 http://kali.download/kali kali-rolling InRelease
 Get:2 http://kali.download/kali kali-rolling/main amd64 Packages [19.4 MB]
@@ -129,7 +129,7 @@ Reading state information... Done
     ghostscript poppler-utils
 ```
 
-**Expected Output**:
+**Output**:
 ```
 Reading package lists... Done
 Building dependency tree... Done
@@ -179,7 +179,7 @@ PRET (Printer Exploitation Toolkit) is the industry-standard framework for print
 └─$ pip3 install colorama pysnmp
 ```
 
-**Expected Output**:
+**Output**:
 ```
 Cloning into 'PRET'...
 remote: Enumerating objects: 489, done.
@@ -237,7 +237,7 @@ MIB (Management Information Base) files translate numerical OIDs (Object Identif
 └─$ sudo download-mibs
 ```
 
-**Expected Output**:
+**Output**:
 ```
 Downloading documents...
   [0001/0362] http://www.iana.org/assignments/ianaippmib-mib
@@ -265,7 +265,7 @@ Successfully downloaded 362 MIB files
 └─$ snmpget --version
 ```
 
-**Expected Output**:
+**Output**:
 ```
 NET-SNMP version: 5.9.3
 ```
@@ -405,7 +405,7 @@ EOF
 └─$ ping -c 4 192.168.1.131
 ```
 
-**Expected Output**:
+**Output**:
 ```
 PING 192.168.1.131 (192.168.1.131) 56(84) bytes of data.
 64 bytes from 192.168.1.131: icmp_seq=1 ttl=64 time=0.521 ms
@@ -454,7 +454,7 @@ rtt min/avg/max/mdev = 0.456/0.492/0.521/0.024 ms
 └─$ sudo arp-scan -l | grep 192.168.1.131
 ```
 
-**Expected Output**:
+**Output**:
 ```
 192.168.1.131   ac:cc:8e:ad:6f:2b   Hewlett Packard
 ```
@@ -476,7 +476,7 @@ rtt min/avg/max/mdev = 0.456/0.492/0.521/0.024 ms
 └─$ nc -zv 192.168.1.131 9100
 ```
 
-**Expected Output**:
+**Output**:
 ```
 Connection to 192.168.1.131 9100 port [tcp/jetdirect] succeeded!
 ```
@@ -516,7 +516,7 @@ sudo nmap -sS -sU -sV -sC -p- -T4 192.168.1.131 -oA recon/initial_scan
 - `-T4`: **Aggressive Timing** (faster, acceptable in lab environments)
 - `-oA`: **All Output Formats** (saves .nmap, .xml, .gnmap for different uses)
 
-**Expected Output**:
+**Output**:
 ```
 Starting Nmap 7.94 ( https://nmap.org ) at 2024-11-18 14:32 EST
 Nmap scan report for 192.168.1.131
@@ -679,7 +679,7 @@ Discovered open port 631/tcp on 192.168.1.131
 └─$ curl -I http://192.168.1.131
 ```
 
-**Expected Output**:
+**Output**:
 ```
 HTTP/1.1 301 Moved Permanently
 Location: https://192.168.1.131/
@@ -699,7 +699,7 @@ Connection: close
 └─$ curl -I -k https://192.168.1.131
 ```
 
-**Expected Output**:
+**Output**:
 ```
 HTTP/1.1 200 OK
 Server: HP HTTP Server 2.0
@@ -730,7 +730,7 @@ Connection: keep-alive
 └─$ echo | openssl s_client -connect 192.168.1.131:443 2>/dev/null | openssl x509 -noout -text
 ```
 
-**Expected Output (Partial)**:
+**Output (Partial)**:
 ```
 Certificate:
     Data:
@@ -859,7 +859,7 @@ echo "Firmware Version: 002_2306A - CHECK CVE DATABASES" >> notes/assessment_not
 - `192.168.1.131`: Target IP
 - `1.3.6.1.2.1.1.1.0`: OID for System Description
 
-**Expected Output**:
+**Output**:
 ```
 SNMPv2-MIB::sysDescr.0 = STRING: HP Color LaserJet Pro MFP 4301fdw, FW:002_2306A, SN:CNXXXXXXX
 ```
@@ -903,7 +903,7 @@ EOF
 └─$ snmpget -v2c -c public 192.168.1.131 1.3.6.1.2.1.1.6.0
 ```
 
-**Expected Output**:
+**Output**:
 ```
 SNMPv2-MIB::sysLocation.0 = STRING: Server-Room-B | Discovery Code: FLAG{L***************1}
 ```
@@ -984,7 +984,7 @@ snmpget -v2c -c public 192.168.1.131 1.3.6.1.2.1.1.6.0 > evidence/snmp_sysLocati
 └─$ snmpget -v2c -c public 192.168.1.131 1.3.6.1.2.1.1.4.0
 ```
 
-**Expected Output**:
+**Output**:
 ```
 SNMPv2-MIB::sysContact.0 = STRING: SecTeam@lab.local | FLAG{L***************4}
 ```
@@ -1076,7 +1076,7 @@ snmpget -v2c -c public 192.168.1.131 1.3.6.1.2.1.1.4.0 > evidence/snmp_sysContac
 - **1.3.6.1.2.1.1**: System MIB (sysDescr, sysLocation, sysContact, sysUptime, etc.)
 - **Output**: All system information in one file
 
-**Expected Output (Partial)**:
+**Output (Partial)**:
 ```
 SNMPv2-MIB::sysDescr.0 = STRING: HP Color LaserJet Pro MFP 4301fdw, FW:002_2306A, SN:CNXXXXXXX
 SNMPv2-MIB::sysObjectID.0 = OID: SNMPv2-SMI::enterprises.11.2.3.9.1
@@ -1105,7 +1105,7 @@ SNMPv2-MIB::sysServices.0 = INTEGER: 72
 └─$ snmp-check -c public 192.168.1.131
 ```
 
-**Expected Output**:
+**Output**:
 ```
 snmp-check v1.9 - SNMP enumerator
 Copyright (c) 2005-2015 by Matteo Cantoni (www.nothink.org)
@@ -1151,7 +1151,7 @@ msf6 auxiliary(scanner/snmp/snmp_enum) > set COMMUNITY public
 msf6 auxiliary(scanner/snmp/snmp_enum) > run
 ```
 
-**Expected Output**:
+**Output**:
 ```
 [+] 192.168.1.131:161 - System information:
 [*]   Host IP                  : 192.168.1.131
@@ -1187,7 +1187,7 @@ msf6 auxiliary(scanner/snmp/snmp_enum) > run
 - Hardware serial numbers
 - Network configuration details
 
-**Expected Output (Sample)**:
+**Output (Sample)**:
 ```
 SNMPv2-SMI::enterprises.11.2.3.9.4.2.1.1.3.2.0 = STRING: "002_2306A"
 SNMPv2-SMI::enterprises.11.2.3.9.4.2.1.1.3.6.0 = STRING: "NPIAD6F2B"
@@ -1273,7 +1273,7 @@ snmpget -v2c -c public 192.168.1.131 1.3.6.1.2.1.1.4.0
 └─$ python3 pret.py 192.168.1.131 ps
 ```
 
-**Expected Output**:
+**Output**:
 ```
      ________________________
     |                        |
@@ -1645,7 +1645,7 @@ for path in /ipp/print /ipp/printer /ipp /printers ""; do
 done
 ```
 
-**Expected Output**:
+**Output**:
 ```
 Testing: ipp://192.168.1.131:631/ipp/print
 200
@@ -1790,7 +1790,7 @@ STATUS successful-ok
 - URI: `ipp://192.168.1.131:631/ipp/print`
 - Test file: `exploits/get-printer-attributes.test`
 
-**Expected Output (Very Long - Showing Key Sections)**:
+**Output (Very Long - Showing Key Sections)**:
 
 ```
 Get All Printer Attributes:
@@ -2021,7 +2021,7 @@ PORT    STATE SERVICE
 └─$ lpstat -h 192.168.1.131:631 -l -p
 ```
 
-**Expected Output**:
+**Output**:
 ```
 printer HP_Color_LaserJet_MFP_4301 is idle.  enabled since Mon 18 Nov 2024 02:15:30 PM EST
         Description: HP-MFP-CTF-FLAG{H***************3}
@@ -2223,7 +2223,7 @@ EOF
 └─$ curl -k -u Admin:68076694 https://192.168.1.131/hp/device/save_restore.xml -o evidence/printer_config.xml
 ```
 
-**Expected Output**:
+**Output**:
 ```
   % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
                                  Dload  Upload   Total   Spent    Left  Speed
@@ -2556,7 +2556,7 @@ Finished
 └─$ nikto -h https://192.168.1.131 -id Admin:68076694
 ```
 
-**Expected Output**:
+**Output**:
 ```
 - Nikto v2.5.0
 ---------------------------------------------------------------------------
@@ -2766,7 +2766,7 @@ ATTR keyword requested-attributes all
 └─$ ipptool -tv ipp://192.168.1.131:631/ipp/print exploits/get-jobs.test
 ```
 
-**Expected Output**:
+**Output**:
 
 ```
 Get All Print Jobs:
@@ -3143,7 +3143,7 @@ Job ID | Date/Time        | User            | Document Name          | Status   
 └─$ lpstat -h 192.168.1.131:631 -W all
 ```
 
-**Expected Output**:
+**Output**:
 ```
 HP_Color_LaserJet_MFP_4301-1234 admin           3072   Mon 13 Nov 2023 10:15:43 AM EST
 HP_Color_LaserJet_MFP_4301-1235 security-audit  1024   Mon 13 Nov 2023 10:15:48 AM EST
