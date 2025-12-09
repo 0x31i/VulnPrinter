@@ -15,20 +15,19 @@ Quick deployment guide for HP Color LaserJet Pro MFP 4301 vulnerable printer lab
 
 **Option A: Via Control Panel (Touchscreen)**
 1. Navigate to: Setup → Network → Wired (Ethernet) → IPv4 Configuration
-2. Set Static IP: `192.168.1.131`
-3. Subnet: `255.255.255.0`
-4. Gateway: `192.168.1.1` (adjust to your network)
+2. Set Static IP: `192.168.148.105`
+3. Subnet: `255.255.0.0`
+4. Gateway: `192.168.148.1` (adjust to your network)
 
 **Option B: Via Web Interface**
 1. Access printer at current DHCP address
 2. Navigate to: Networking → Wired → IPv4 Configuration
-3. Set Static IP: `192.168.1.131`
-
+3. Set Static IP: `192.168.148.105192.168.148.105
 ### 2. Verify Connectivity
 
 ```bash
-ping 192.168.1.131
-nmap -p 631,9100,161 192.168.1.131
+ping 192.168.148.105
+nmap -p 631,9100,161 192.168.148.105
 ```
 
 Expected: All three ports should be open.
@@ -37,7 +36,7 @@ Expected: All three ports should be open.
 
 ### Access Embedded Web Server (EWS)
 
-1. Navigate to: `https://192.168.1.131`
+1. Navigate to: `https://192.168.148.105`
 2. Accept security certificate warning
 3. **Default Credentials:**
    - Username: `admin` (lowercase)
@@ -46,35 +45,51 @@ Expected: All three ports should be open.
 
 ### Enable Required Services
 
-**Navigate to:** Network → Network Identification → mDNS Configuration
-- Enable mDNS: ✓
-
-**Navigate to:** Network → Other Settings
-- Enable SNMPv1/v2c: ✓
-- Read Community: `public`
-- Write Community: `public` (or `private`)
+**Navigate to:** Network → Network Settings → Services
+- Enable SNMP v1/v2 read/write
+- Set ALL community names (SET/GET) to public.
+- Toggle "Enable SNMPV1/V2 default Get... "
+- Then click "APPLY"
 
 **Verify IPP is enabled** (usually enabled by default):
-- Network → Services → IPP Printing: ✓
+- Network → Advanced Settings → IPP Printing
+- Enable IPP
+- Then click "APPLY"
+
+- **Navigate to:** Network → Network Security → Firewall
+- Disable the Firewall
+- Ensure the Default Rule is set to "Allow"
+- Then click "APPLY"
+
+- **Navigate to:** Network → Network Security → Secure Communication
+- Move all Ciphers to the "Active" table (table on the right)
+- Make sure both tables are disabled (unchecked)
+- Then, under the SSL/TLS Protocal section
+- Ensure the Minimum Protocol Version is set to "TLS 1.0"
+- Ensure the Maximum Protocol Version is set to "TLS 1.1"
+- Ensure the EC Curve Version is set to "Curve P-256"
+- Then click "APPLY"
+
+- Finally, **Navigate to:** Network → Network Security → SMB
+- Enable all versions of SMB
 
 ## Flag Deployment
 
 ### 1. Download and Prepare Script
 
 ```bash
-# Download the deployment script
-curl -O https://raw.githubusercontent.com/your-repo/vulnprinter.sh
+# Download the deployment script from this github project and make it executable
 chmod +x vulnprinter.sh
 
 # Verify printer IP matches (edit if different)
 nano vulnprinter.sh
-# Check: PRINTER_IP="192.168.1.131"
+# Check: PRINTER_IP="192.168.148.105"
 ```
 
 ### 2. Run Deployment Script
 
 ```bash
-sudo ./vulnprinter.sh
+sh ./vulnprinter.sh
 ```
 
 **What the script does:**
@@ -100,7 +115,7 @@ sudo ./vulnprinter.sh
     ✓ Job 3 sent
 
 [3/3] Manual web configuration required for HAN flag:
-  URL: https://192.168.1.131
+  URL: https://192.168.148.105
   Press ENTER when HAN flag is configured...
 ```
 
@@ -108,7 +123,7 @@ sudo ./vulnprinter.sh
 
 **When script prompts, complete this step:**
 
-1. Open web browser: `https://192.168.1.131`
+1. Open web browser: `https://192.168.148.105`
 2. Login with admin credentials
 3. Navigate to: **General → About The Printer → Configure Information**
 4. **Printer Nickname** field: Enter `HP-MFP-FLAG{HAN62947103}`
@@ -142,10 +157,10 @@ printer-info (nameWithoutLanguage) = HP-MFP-FLAG{HAN62947103}
 
 ```bash
 # SNMP enumeration
-snmpwalk -v2c -c public 192.168.1.131 1.3.6.1.2.1.1
+snmpwalk -v2c -c public 192.168.148.105 1.3.6.1.2.1.1
 
 # IPP printer attributes
-ipptool -tv ipp://192.168.1.131:631/ipp/print - << EOF
+ipptool -tv ipp://192.168.148.105:631/ipp/print - << EOF
 {
     NAME "Get Printer Attributes"
     OPERATION Get-Printer-Attributes
@@ -159,7 +174,7 @@ ipptool -tv ipp://192.168.1.131:631/ipp/print - << EOF
 EOF
 
 # IPP print jobs
-ipptool -tv ipp://192.168.1.131:631/ipp/print - << EOF
+ipptool -tv ipp://192.168.148.105:631/ipp/print - << EOF
 {
     NAME "Get Jobs"
     OPERATION Get-Jobs
@@ -174,30 +189,18 @@ ipptool -tv ipp://192.168.1.131:631/ipp/print - << EOF
 EOF
 ```
 
-## Deployed Flags Summary
-
-| Flag ID | Flag Value | Protocol | Location | Difficulty |
-|---------|-----------|----------|----------|------------|
-| 1 | `FLAG{LUKE47239581}` | SNMP + IPP | sysLocation / printer-location | Easy |
-| 2 | `FLAG{LEIA83920174}` | SNMP only | sysContact | Medium |
-| 3 | `FLAG{HAN62947103}` | IPP | printer-info (nickname) | Easy |
-| 4 | `FLAG{PADME91562837}` | IPP | job-originating-user-name | Medium |
-| 5 | `FLAG{MACE41927365}` | IPP | job-name | Medium |
-
-**Total Points:** 5 flags × varying difficulty
-
 ## Troubleshooting
 
 ### Script Fails at SNMP Step
 
-**Error:** `Timeout: No Response from 192.168.1.131`
+**Error:** `Timeout: No Response from 192.168.148.105`
 
 **Solution:**
 1. Verify SNMP is enabled: EWS → Network → Other Settings → SNMPv1/v2c
 2. Check write community string is `public` or `private`
 3. Test manually:
    ```bash
-   snmpget -v2c -c public 192.168.1.131 1.3.6.1.2.1.1.6.0
+   snmpget -v2c -c public 192.168.148.105 1.3.6.1.2.1.1.6.0
    ```
 
 ### Print Jobs Not Appearing
@@ -208,7 +211,7 @@ EOF
 1. Check web interface Job Queue tab for "Guest: Print" jobs
 2. Jobs may have already printed - check completed jobs:
    ```bash
-   ipptool -tv ipp://192.168.1.131:631/ipp/print - << EOF
+   ipptool -tv ipp://192.168.148.105:631/ipp/print - << EOF
    {
        NAME "Get Completed Jobs"
        OPERATION Get-Jobs
@@ -229,9 +232,9 @@ EOF
 **Error:** Browser shows "This site can't be reached"
 
 **Solution:**
-1. Verify IP: `ping 192.168.1.131`
-2. Check port 80/443: `nmap -p 80,443 192.168.1.131`
-3. Try HTTP instead: `http://192.168.1.131`
+1. Verify IP: `ping 192.168.148.105`
+2. Check port 80/443: `nmap -p 80,443 192.168.148.105`
+3. Try HTTP instead: `http://192.168.148.105`
 4. Factory reset via control panel if unresponsive
 
 ### Wrong Admin PIN
