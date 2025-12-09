@@ -3,7 +3,7 @@
 # HP Printer CTF Flag Deployment - Version 6.0
 ################################################################################
 
-PRINTER_IP="192.168.1.131"
+PRINTER_IP="192.168.148.105"
 PRINTER_URI="ipp://${PRINTER_IP}:631/ipp/print"
 TMP_DIR="/tmp/ctf_printer_$$"
 
