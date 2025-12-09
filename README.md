@@ -17,12 +17,12 @@ Quick deployment guide for HP Color LaserJet Pro MFP 4301 vulnerable printer lab
 1. Navigate to: Setup → Network → Wired (Ethernet) → IPv4 Configuration
 2. Set Static IP: `192.168.148.105`
 3. Subnet: `255.255.0.0`
-4. Gateway: `192.168.148.1` (adjust to your network)
+4. Gateway: `192.168.148.1`
 
 **Option B: Via Web Interface**
 1. Access printer at current DHCP address
 2. Navigate to: Networking → Wired → IPv4 Configuration
-3. Set Static IP: `192.168.148.105192.168.148.105
+3. Set Static IP: `192.168.148.105`
 ### 2. Verify Connectivity
 
 ```bash
