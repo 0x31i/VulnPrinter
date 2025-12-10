@@ -1,6 +1,6 @@
 # HP Printer CTF Lab - Setup Guide
 
-Quick deployment guide for HP Color LaserJet Pro MFP 4301 vulnerable printer lab with Pokemon-themed flags.
+Quick deployment guide for HP Color LaserJet Pro MFP 4301 vulnerable printer lab with flags.
 
 ## Prerequisites
 
